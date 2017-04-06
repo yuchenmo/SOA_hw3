@@ -2,7 +2,7 @@
 # @Author: yuchen
 # @Date:   2017-04-06 13:38:20
 # @Last Modified by:   yuchen
-# @Last Modified time: 2017-04-06 21:29:45
+# @Last Modified time: 2017-04-06 21:57:16
 
 import http
 import urllib
@@ -23,6 +23,7 @@ class FaceAPI(object):
         self.person_group_url_root = "/face/v1.0/persongroups/"
         self.detect_url_root = "/face/v1.0/detect?"
         self.identify_url_root = "/face/v1.0/identify?"
+        self.null_params = urllib.parse.urlencode({})
 
     def _get_data(self, raw_data):
         if len(raw_data) > 0:
@@ -33,14 +34,13 @@ class FaceAPI(object):
 
     # Output: contains 'error' key or not
     def check_person_group(self):
-        params = urllib.parse.urlencode({})
+        print ("Checking person group")
         try:
             conn = http.client.HTTPSConnection(self.cognitive_url)
-            conn.request("GET", self.person_group_url_root + "{}?{}".format(self.person_group_id, params), 
+            conn.request("GET", self.person_group_url_root + "{}?{}".format(self.person_group_id, self.null_params), 
                           None, self.headers)
             response = conn.getresponse()
             data = self._get_data(response.read())
-            print (data)
             conn.close()
         except Exception as e:
             data = {'error': 'GET failed in check_person_group: {}'.format(e)}
@@ -48,7 +48,7 @@ class FaceAPI(object):
 
     # Output: None
     def create_person_group(self):
-        params = urllib.parse.urlencode({})
+        print ("Creating person group")
         body = {
             "name": "hw3",
             "userData": "Users registered in SOA_HW3"
@@ -56,7 +56,7 @@ class FaceAPI(object):
 
         try:
             conn = http.client.HTTPSConnection(self.cognitive_url)
-            conn.request("PUT", self.person_group_url_root + "{}?{}".format(self.person_group_id, params), 
+            conn.request("PUT", self.person_group_url_root + "{}?{}".format(self.person_group_id, self.null_params), 
                          json.dumps(body), self.headers)
             response = conn.getresponse()
             data = self._get_data(response.read())
@@ -66,10 +66,10 @@ class FaceAPI(object):
         return data
 
     def delete_person_group(self):
-        params = urllib.parse.urlencode({})
+        print ("Deleting person group")
         try:
             conn = http.client.HTTPSConnection(self.cognitive_url)
-            conn.request("DELETE", self.person_group_url_root + "{}?{}".format(self.person_group_id, params), 
+            conn.request("DELETE", self.person_group_url_root + "{}?{}".format(self.person_group_id, self.null_params), 
                          '', self.headers)
             response = conn.getresponse()
             data = self._get_data(response.read())
@@ -80,10 +80,10 @@ class FaceAPI(object):
 
     # Output: None
     def train_person_group(self):
-        params = urllib.parse.urlencode({})
+        print ("Traininng person group")
         try:
             conn = http.client.HTTPSConnection(self.cognitive_url)
-            conn.request("POST", self.person_group_url_root +  "{}/train?{}".format(self.person_group_id, params),
+            conn.request("POST", self.person_group_url_root +  "{}/train?{}".format(self.person_group_id, self.null_params),
                          '', self.headers)
             response = conn.getresponse()
             data = self._get_data(response.read())
@@ -94,10 +94,10 @@ class FaceAPI(object):
 
     # Output: status("succeeded")
     def check_train_status(self):
-        params = urllib.parse.urlencode({})
+        print ("Checking train status")
         try:
             conn = http.client.HTTPSConnection(self.cognitive_url)
-            conn.request("GET", self.person_group_url_root + "{}/training?{}".format(self.person_group_id, params),
+            conn.request("GET", self.person_group_url_root + "{}/training?{}".format(self.person_group_id, self.null_params),
                          '', self.headers)
             response = conn.getresponse()
             data = self._get_data(response.read())
@@ -109,7 +109,7 @@ class FaceAPI(object):
 
     # Output: personId(string)
     def create_person(self, username, userdata=''):
-        params = urllib.parse.urlencode({})
+        print ("Creating person: username = {}".format(username))
         body = {
             "name": username,
             "userData": userdata
@@ -117,7 +117,7 @@ class FaceAPI(object):
         
         try:
             conn = http.client.HTTPSConnection(self.cognitive_url)
-            conn.request("POST", self.person_group_url_root + "{}/persons?{}".format(self.person_group_id, params),
+            conn.request("POST", self.person_group_url_root + "{}/persons?{}".format(self.person_group_id, self.null_params),
                          json.dumps(body), self.headers)
             response = conn.getresponse()
             data = self._get_data(response.read())
@@ -129,6 +129,7 @@ class FaceAPI(object):
     # Input: personId, imgurl, userdata(optional)
     # Output: persistedFaceId(string)
     def add_face(self, personid, imgurl, targetface='', userdata=''):
+        print ("Adding face")
         params = urllib.parse.urlencode({
             # Request parameters
             'userData': userdata,
@@ -153,6 +154,7 @@ class FaceAPI(object):
     # Input: image url
     # Output: faceId, faceRectangle, faceAttributes
     def detect(self, url):
+        print ("Detecting")
         face_id_attr_params = urllib.parse.urlencode({
             # Request parameters
             'returnFaceId': 'true',
@@ -172,7 +174,7 @@ class FaceAPI(object):
         return data
 
     def identify(self, faceId):
-        params = urllib.parse.urlencode({})
+        print ("Identifying")
         body = {    
             "personGroupId": self.person_group_id,
             "faceIds": [faceId],
@@ -182,7 +184,7 @@ class FaceAPI(object):
 
         try:
             conn = http.client.HTTPSConnection(self.cognitive_url)
-            conn.request("POST", self.identify_url_root + params, json.dumps(body), self.headers)
+            conn.request("POST", self.identify_url_root + self.null_params, json.dumps(body), self.headers)
             response = conn.getresponse()
             data = self._get_data(response.read())
             conn.close()
