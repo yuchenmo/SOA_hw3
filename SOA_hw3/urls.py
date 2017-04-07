@@ -16,10 +16,12 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from views import index_view
-from views import test_view
+# from views import test_view
+from views import main_view
 
 urlpatterns = [
 	url(r'^$', index_view.index_view, name="Index page"),
-	url(r'^get_snapshot/$', test_view.test_view, name="Test upload image"),
+	# url(r'^get_snapshot$', test_view.test_view, name="Test upload image"),
+    url(r'^main$', main_view.main_view, name="Main menu"),
     url(r'^admin/', admin.site.urls),
 ]

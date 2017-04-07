@@ -2,7 +2,7 @@
 # @Author: yuchen
 # @Date:   2017-04-06 13:38:20
 # @Last Modified by:   yuchen
-# @Last Modified time: 2017-04-06 21:57:16
+# @Last Modified time: 2017-04-07 16:29:40
 
 import http
 import urllib
@@ -16,7 +16,7 @@ class FaceAPI(object):
         self.headers = {
             # Request headers
             'Content-Type': 'application/json',
-            'Ocp-Apim-Subscription-Key': json.load(open("../utils/apikey.json", 'r'))['key'],
+            'Ocp-Apim-Subscription-Key': json.load(open("../key/apikey.json", 'r'))['key'],
         }
 
         self.cognitive_url = "westus.api.cognitive.microsoft.com"
