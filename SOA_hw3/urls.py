@@ -17,11 +17,19 @@ from django.conf.urls import url
 from django.contrib import admin
 from views import index_view
 # from views import test_view
+from views import login_view
 from views import main_view
+from views import profile_view
+from views import register_view
 
 urlpatterns = [
 	url(r'^$', index_view.index_view, name="Index page"),
 	# url(r'^get_snapshot$', test_view.test_view, name="Test upload image"),
+    url(r'^login_face$', login_view.login_with_face, name="Login jump 1"),
+    url(r'^login_pw$', login_view.login_with_password, name="Login jump 2"),
+    url(r'^register$', register_view.register, name="Register"),
+    url(r'^register_jump', register_view.register_jump, name="Register jump"),
     url(r'^main$', main_view.main_view, name="Main menu"),
+    url(r'^profile$', profile_view.profile_view, name="User profile view"),
     url(r'^admin/', admin.site.urls),
 ]

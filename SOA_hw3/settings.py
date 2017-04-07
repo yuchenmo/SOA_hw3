@@ -124,7 +124,3 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-
-from face.loginapi import LoginAPI 
-env = LoginAPI()
-

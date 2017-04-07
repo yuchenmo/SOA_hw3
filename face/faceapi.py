@@ -2,13 +2,14 @@
 # @Author: yuchen
 # @Date:   2017-04-06 13:38:20
 # @Last Modified by:   yuchen
-# @Last Modified time: 2017-04-07 16:29:40
+# @Last Modified time: 2017-04-07 17:21:20
 
 import http
 import urllib
 from urllib import request, parse, error
 import base64
 import json
+from os import path as op
 
 class FaceAPI(object):
     def __init__(self):
@@ -16,7 +17,7 @@ class FaceAPI(object):
         self.headers = {
             # Request headers
             'Content-Type': 'application/json',
-            'Ocp-Apim-Subscription-Key': json.load(open("../key/apikey.json", 'r'))['key'],
+            'Ocp-Apim-Subscription-Key': json.load(open("key/apikey.json", 'r'))['key'],
         }
 
         self.cognitive_url = "westus.api.cognitive.microsoft.com"
@@ -106,7 +107,6 @@ class FaceAPI(object):
             data = {'error': 'GET failed in check_train_status: {}'.format(e)}
         return data
 
-
     # Output: personId(string)
     def create_person(self, username, userdata=''):
         print ("Creating person: username = {}".format(username))
@@ -124,6 +124,55 @@ class FaceAPI(object):
             conn.close()
         except Exception as e:
             data = {'error': 'POST failed in create_person: {}'.format(e)}
+        return data
+
+    # Input: personId(string)
+    def update_person(self, personid, userdata=''):
+        print ("Updating person: personid = {}".format(personid))
+        body = {
+            'userData': userdata 
+        }
+        try:
+            conn = http.client.HTTPSConnection(self.cognitive_url)
+            conn.request("PATCH", self.person_group_url_root +  "{}/persons/{}?{}".format(
+                         self.person_group_id, personId, self.null_params),
+                         json.dumps(body), self.headers)
+            response = conn.getresponse()
+            data = self._get_data(response.read())
+            conn.close()
+        except Exception as e:
+            data = {'error': 'PATCH failed in update_person: {}'.format(e)}
+        return data
+
+    # Input: personId(string)
+    # Output: all data{'personId'(string), 'persistedFaceIds'(list), 'name'(string), 'userData'(string)}
+    def get_person(self, personid):
+        print ("Getting person: personid = {}".format(personid))
+        try:
+            conn = http.client.HTTPSConnection(self.cognitive_url)
+            conn.request("GET", self.person_group_url_root + "{}/persons/{}?{}".format(
+                         self.person_group_id, personid, self.null_params), 
+                         '', self.headers)
+            response = conn.getresponse()
+            data = self._get_data(response.read())
+            conn.close()
+        except Exception as e:
+            data = {'error': 'GET failed in get_person: {}'.format(e)}
+        return data
+
+    # Input: personId(string), faceId(string)
+    # Output: persistedFaceId(string), userData(string)
+    def get_person_face(self, personid, faceid):
+        try:
+            conn = http.client.HTTPSConnection(self.cognitive_url)
+            conn.request("GET", self.person_group_url_root + "{}/persons/{}/persistedFaces/{}?{}".format(
+                         self.person_group_id, personid, faceid, self.null_params),
+                         '', self.headers)
+            response = conn.getresponse()
+            data = self._get_data(response.read())
+            conn.close()
+        except Exception as e:
+            data = {'error': 'GET failed in get_person_face: {}'.format(e)}
         return data
 
     # Input: personId, imgurl, userdata(optional)
@@ -173,6 +222,8 @@ class FaceAPI(object):
             data = {'error': 'POST failed in detect: {}'.format(e)}
         return data
 
+    # Input: faceId(string)
+    # Output: error msg or corresponding username
     def identify(self, faceId):
         print ("Identifying")
         body = {    

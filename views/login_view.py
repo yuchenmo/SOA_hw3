@@ -6,21 +6,26 @@ from django.template import Context, loader
 from django.contrib import auth
 from django.contrib.auth.models import User
 
-from IPython import embed
+from os import path as op
+from hashlib import md5
 import json
-import md5
+
+from face.loginapi import env
+import numpy as np
+import cv2
+
+from IPython import embed
 
 ip = "localhost:8000"
 
 @csrf_exempt
 def login_with_face(request, **kwargs):
-    env = settings.env
     if request.POST is not None:
         nparr = np.fromstring(request.body, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        m = md5.new()
+        m = md5()
         m.update(request.body)
-        name = "{}.jpg".format(m.digest())
+        name = "{}.jpg".format(m.hexdigest())
         path = op.join(settings.BASE_DIR + settings.STATIC_DIRS, 'snapshots', name)
         cv2.imwrite(path, img)
         url = "http://{}/static/snapshots/{}".format(ip, name)

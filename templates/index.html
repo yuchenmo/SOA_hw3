@@ -15,7 +15,7 @@
 	
 	<!-- Configure a few settings -->
 	<script language="JavaScript">
-		webcam.set_api_url( '/get_snapshot/' );
+		webcam.set_api_url( '/login_face' );
 		webcam.set_quality( 90 ); // JPEG quality (1 - 100)
 		webcam.set_shutter_sound( true ); // play shutter click sound
 	</script>
@@ -30,6 +30,7 @@
 		<input type=button value="Configure..." onClick="webcam.configure()">
 		&nbsp;&nbsp;
 		<input type=button value="Take Snapshot" onClick="take_snapshot()">
+		<input type=button value="Register" onClick="location='register'">
 	</form>
 	
 	<!-- Code to handle the server response (see test.php) -->
