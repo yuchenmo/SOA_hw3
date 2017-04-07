@@ -28,3 +28,6 @@ SOA homework 3
 		env.login_with_face('xxx.jpg')
 
 
+## Acknowlegdement
+
+-	[jpegcam](https://code.google.com/archive/p/jpegcam/downloads). Rearranged files to suit Django style
