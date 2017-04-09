@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link href="/static/css/style_newresult.css" rel="stylesheet">
 </head>
 
 <body style="background-color: #f5f5f5">
@@ -25,7 +24,11 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <!--<li><a href="#">Sign up</a></li>-->
-                    <li> Title </li>
+                    <li><a href="/profile">Profile</a></li>
+                    <li><a href="/main">Main page</a></li>
+                    <li><a href="/logout">Log out</a></li>
+                </ul>
+            </div>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -35,11 +38,12 @@
         <div class="row">
             <div class="col-md-4" style="background-color: #f5f5f5;"></div>
             <div class="col-md-4">
-              <li> {{age}} </li>
-              <li> {{gender}} </li>
-              <li> {{smile}} </li>
-              <li> {{emotion}} </li>
+              <li> Age: {{age}} </li>
+              <li> Gender: {{gender}} </li>
+              <li> Seems {{emotion}} </li>
+              <li> Already registered {{facenum}} face(s)</li>
             </div>
+            <button type="button" class="" onClick="location='add_face'">Add a face</button>
         </div>
     </div>
 </body>

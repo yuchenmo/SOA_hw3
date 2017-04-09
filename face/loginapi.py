@@ -2,12 +2,13 @@
 # @Author: yuchen
 # @Date:   2017-04-06 19:03:25
 # @Last Modified by:   yuchen
-# @Last Modified time: 2017-04-07 18:43:03
+# @Last Modified time: 2017-04-09 10:30:21
 
 # This lib provides higher level APIs than faceAPI.
 # Through this lib, faceAPI should not be transparent to the back-end module.
 
 from .faceapi import FaceAPI
+import json
 import numpy as np
 
 class Singleton(type):
@@ -28,9 +29,13 @@ class LoginAPI(metaclass=Singleton):
 		else:
 			tmp = self._ensure(self._env.delete_person_group())
 
-		tmp = self._ensure(self._env.create_person_group())
 		self.username_to_personid = {}
 		self.personid_to_username = {}
+
+		tmp = self._ensure(self._env.create_person_group())
+		tmp = self.create_person('JieTang')
+		tmp = self.add_face('JieTang', 'http://am-cdn-s0.b0.upaiyun.com/picture/01823/Jie_Tang_1348889820664.jpg!160?ran=0.6222543733421229')
+		tmp = self._ensure(self._env.train_person_group())
 		print ("New LoginAPI object created")
 
 	# Ensure FaceAPI status
@@ -73,19 +78,25 @@ class LoginAPI(metaclass=Singleton):
 			return {'error': 'Model is under training'}
 
 		face_data = self._ensure(self._env.detect(img_url))
+		if len(face_data) == 0:
+			return {'error': 'No face detected'}
+
 		face_data = sorted(face_data,
 						   key=lambda x: (x['faceRectangle']['width'] * x['faceRectangle']['height']))[::-1]
-
 		faceId = face_data[0]['faceId']
 
 		tmp = self._ensure(self._env.identify(faceId))
 		candidate = None
+		print ("Identify result: {}".format(tmp))
 		for item in tmp:
 			if item['faceId'] == faceId:
 				candidate = item['candidates']
 				break
 		if candidate is None or not isinstance(candidate, list):
 			return {'error': 'Cognitive Service API error'}
+
+		if len(candidate) == 0:
+			return {'error': 'No reliable identification found'}
 
 		if candidate[0]['confidence'] > 0.1:
 			return {'username': self.personid_to_username[candidate[0]['personId']]}
@@ -100,21 +111,20 @@ class LoginAPI(metaclass=Singleton):
 		person_data = self._ensure(self._env.get_person(personid))
 		agelist = []
 		genderlist = []
-		smilelist = []
 		emotionlist = []
 		emotionkeys = ["anger", "contempt", "disgust", "fear", "happiness", "neutral", "sadness", "surprise"]
 		serial_emotion = lambda x: [x[y] for y in emotionkeys]
 		for faceid in person_data['persistedFaceIds']:
-			face_data = json.loads(self._ensure(self._env.get_person_face(personid, faceid)))
+			face_data = json.loads(self._ensure(self._env.get_person_face(personid, faceid))['userData'])
+			print ("FACE DATA = {}, TYPE = {}".format(face_data, type(face_data)))
 			agelist.append(float(face_data['age']))
 			genderlist.append(1.0 if face_data['age'] == 'male' else 0.0)
-			smilelist.append(float(face_data['smile']))
 			emotionlist.append(serial_emotion(face_data['emotion']))
 		age = np.array(agelist).mean()
 		gender = np.array(genderlist).mean()
-		smile = np.array(smilelist).mean()
 		emotion = np.array(emotionlist).mean(axis=0)
-		return {'age': age, 'gender': gender, 'smile': smile, 'emotion': emotion}
+		facenum = len(agelist)
+		return {'age': age, 'gender': gender, 'emotion': emotion, 'facenum': facenum}
 
 env = LoginAPI()
 

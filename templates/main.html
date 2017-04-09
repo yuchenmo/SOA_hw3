@@ -24,11 +24,59 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <!--<li><a href="#">Sign up</a></li>-->
+                    <li><a href="/profile">Profile</a></li>
                     <li><a>Main page</a></li>
+                    <li><a href="/logout">Log out</a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
         </div>
+    </div>
+    <div class="col-md-4 col-md-offset-4">
+        <form class="form-signin2" action="predict" method="post">
+            <div>
+                <label>品牌</label>
+                <select id="make" name="make" class="form-control">
+                    <option value="alfa-romero">alfa-romero</option>
+                    <option value="audi">audi</option>
+                    <option value="bmw">bmw</option>
+                    <option value="chevrolet">chevrolet</option>
+                    <option value="dodge">dodge</option>
+                    <option value="honda">honda</option>
+                    <option value="isuzu">isuzu</option>
+                    <option value="jaguar">jaguar</option>
+                    <option value="mazda">mazda</option>
+                    <option value="mercedes-benz">bmw</option>
+                    <option value="mercury">mercury</option>
+                    <option value="mitsubishi">mitsubishi</option>
+                    <option value="nissan">nissan</option>
+                    <option value="peugot">peugot</option>
+                </select>
+                <label>车型</label>
+                <select id="body-style" name="body-style" class="form-control">
+                    <option value="convertible">convertible</option>
+                    <option value="hatchback">hatchback</option>
+                    <option value="sedan">sedan</option>
+                    <option value="wagon">wagon</option>
+                </select>
+                <label>wheel-base</label>
+                <input type="text" class="form-control" required autofocus name="wheel-base" {% if wheel_base %}placeholder={{wheel_base}}{% endif %}>
+                <label>engine-size</label>
+                <input type="text" class="form-control" required autofocus name="engine-size" {% if engine_size %}placeholder={{engine_size}}{% endif %}>
+                <label>horsepower</label>
+                <input type="text" class="form-control" required autofocus name="horsepower" {% if horsepower %}placeholder={{horsepower}}{% endif %}>
+                <label>peak-rpm</label>
+                <input type="text" class="form-control" required autofocus name="peak-rpm" {% if peak_rpm %}placeholder={{peak_rpm}}{% endif %}>
+                <label>highway-mpg</label>
+                <input type="text" class="form-control" required autofocus name="highway-mpg" {% if highway_mpg %}placeholder={{highway_mpg}}{% endif %}>
+            </div>
+            <div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+            </div>
+        </form>
+        {% if price %}
+        <div>Predicted Price: {{price}}</div>
+        {% endif %}
     </div>
 </body>
 

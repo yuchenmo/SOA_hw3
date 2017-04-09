@@ -15,7 +15,7 @@
 	
 	<!-- Configure a few settings -->
 	<script language="JavaScript">
-		webcam.set_api_url( '/login_face' );
+		webcam.set_api_url( '/login_face_jump' );
 		webcam.set_quality( 90 ); // JPEG quality (1 - 100)
 		webcam.set_shutter_sound( true ); // play shutter click sound
 	</script>
@@ -31,6 +31,7 @@
 		&nbsp;&nbsp;
 		<input type=button value="Take Snapshot" onClick="take_snapshot()">
 		<input type=button value="Register" onClick="location='register'">
+		<input type=button value="Login with password", onClick="location='login_password'">
 	</form>
 	
 	<!-- Code to handle the server response (see test.php) -->
@@ -44,13 +45,14 @@
 		}
 		
 		function my_completion_handler(msg) {
+
 			if (msg.match(/(http\:\/\/\S+)/)) {
-				var image_url = RegExp.$1;
+				//var image_url = RegExp.$1;
 				// show JPEG image in page
 				document.getElementById('upload_results').innerHTML = 
-					'<h1>Upload Successful!</h1>' + 
-					'<h3>JPEG URL: ' + image_url + '</h3>' + 
-					'<img src="' + image_url + '">';
+					'<h1>Upload Successful!</h1>' //+ 
+					//'<h3>JPEG URL: ' + image_url + '</h3>' + 
+					//'<img src="' + image_url + '">';
 				
 				// reset camera for another shot
 				webcam.reset();

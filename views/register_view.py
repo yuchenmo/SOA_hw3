@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 
 import json
 
+from face.loginapi import env
+
 @csrf_exempt
 def register(request, **kwargs):
     template = loader.get_template('register.html')
@@ -26,16 +28,20 @@ def register_jump(request, **kwargs):
 
     if password == password_rep:
         if User.objects.filter(username=username).exists():
+            print ("Already exists")
             data = {
                 'info': 'Username already exists'
             }
             template = loader.get_template('register.html')
             return HttpResponse(template.render(data))
         else:
+            print ("Created: {}, {}, {}".format(username, email, password))
             user = User.objects.create_user(username, email, password)
             auth.login(request, user)
-            return HttpResponseRedirect("/")
+            env.create_person(username)
+            return HttpResponseRedirect("/main")
     else:
+        print ("PWD not match")
         data = {
             'info': 'Password should be the same'
         }

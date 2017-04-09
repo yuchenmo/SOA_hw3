@@ -5,8 +5,7 @@ from django.conf import settings
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
 
-@login_required(login_url='/')
 @csrf_exempt
-def main_view(request, **kwargs):
-    template = loader.get_template('main.html')
+def error_view(request):
+    template = loader.get_template('error.html')
     return HttpResponse(template.render({}))
