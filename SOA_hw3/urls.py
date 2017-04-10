@@ -23,6 +23,7 @@ from views import profile_view
 from views import register_view
 from views import error_view
 from views import predict_view
+from views import luis_view
 
 urlpatterns = [
 	url(r'^$', index_view.index_view, name="Index page"),
@@ -40,6 +41,7 @@ urlpatterns = [
     url(r'^profile$', profile_view.profile_view, name="User profile view"),
     url(r'^main$', main_view.main_view, name="Main menu"),
     url(r'^predict$', predict_view.predict_view, name="Predict view"),
+    url(r'^luis$', luis_view.luis_view, name="Language understanding API"),
     url(r'^error$', error_view.error_view, name="Error view"),
     url(r'^.*?$', index_view.index_view, name="Error"),
     url(r'^admin/', admin.site.urls),

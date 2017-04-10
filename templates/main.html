@@ -33,6 +33,26 @@
         </div>
     </div>
     <div class="col-md-4 col-md-offset-4">
+        <form role="form" method="get" action="luis">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <label class="sr-only" for="location">Need any help?</label>
+                    <input type="text" class="form-control" id="location" placeholder="Need any help?" name="content">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-default btn-primary">Go</button>
+                </div>
+            </div>
+        </form>
+        <style>
+        .form-signin2 {
+            padding-top: 50px;
+            padding-bottom: 30px;
+        }
+        .submitbutton{
+            margin-top: 20px;
+        }
+        </style>
         <form class="form-signin2" action="predict" method="post">
             <div>
                 <label>品牌</label>
@@ -71,11 +91,18 @@
                 <input type="text" class="form-control" required autofocus name="highway-mpg" {% if highway_mpg %}placeholder={{highway_mpg}}{% endif %}>
             </div>
             <div>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+                <button class="btn btn-lg btn-primary btn-block submitbutton" type="submit">Submit</button>
             </div>
         </form>
-        {% if price %}
-        <div>Predicted Price: {{price}}</div>
+        <div class="container-fluid container-center">
+            {% if price %}
+            <div class="col-md-8">
+                <label>
+                    Predicted Price:
+                </label>
+                <p>{{price}}</p>
+            </div>
+        </div>
         {% endif %}
     </div>
 </body>

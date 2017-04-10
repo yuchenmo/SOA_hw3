@@ -17,19 +17,21 @@ def profile_view(request, **kwargs):
     print(profile)
     age = profile['age']
     gender = profile['gender']
-    emotion = np.array(profile['emotion']).argmax()
+    emotion_arg = np.array(profile['emotion']).argmax()
     facenum = profile['facenum']
     emotionkeys = ["anger", "contempt", "disgust", "fear", "happiness",
                    "neutral", "sadness", "surprise"]
 
     gender = ('male' if gender < 0.35
               else ('female' if gender > 0.65 else 'unknown'))
-    if profile['emotion'][emotion] > 0.1:
-        emotion = profile['emotion'][emotion]
+    if profile['emotion'][emotion_arg] > 0.1:
+        emotion = emotionkeys[emotion_arg]
     else:
         emotion = 'unknown'
 
     data = {
+        'name': request.user.username,
+        'email': request.user.email,
         'age': age,
         'gender': gender,
         'emotion': emotion,

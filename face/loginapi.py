@@ -2,7 +2,7 @@
 # @Author: yuchen
 # @Date:   2017-04-06 19:03:25
 # @Last Modified by:   yuchen
-# @Last Modified time: 2017-04-10 11:36:06
+# @Last Modified time: 2017-04-10 16:30:00
 
 # This lib provides higher level APIs than faceAPI.
 # Through this lib, faceAPI should not be transparent to the back-end module.
@@ -99,6 +99,8 @@ class LoginAPI(metaclass=Singleton):
         face_data = sorted(face_data,
                            key=lambda x: (x['faceRectangle']['width'] * x['faceRectangle']['height']))[::-1]
 
+        if len(face_data) == 0:
+            return {'error': 'No face detected'}
         faceId = face_data[0]['faceId']
         rect = face_data[0]['faceRectangle']
         attribute = face_data[0]['faceAttributes']
