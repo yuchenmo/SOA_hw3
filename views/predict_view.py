@@ -10,11 +10,13 @@ from django.contrib.auth.models import User
 import json
 from automobile.model import predict
 
+
 @csrf_exempt
 def predict_view(request, **kwargs):
     inp = {}
     show_inp = {}
-    namelist = ['make', 'body-style', 'wheel-base', 'engine-size', 'horsepower', 'peak-rpm', 'highway-mpg']
+    namelist = ['make', 'body-style', 'wheel-base', 'engine-size',
+                'horsepower', 'peak-rpm', 'highway-mpg']
     for item in namelist:
         inp[item] = str(request.POST.get(item))
         show_inp[item.replace('-', '_')] = str(request.POST.get(item))

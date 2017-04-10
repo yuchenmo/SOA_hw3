@@ -10,10 +10,11 @@ import json
 
 from face.loginapi import env
 
+
 @csrf_exempt
 def register(request, **kwargs):
     template = loader.get_template('register.html')
-    print ("template = {}".format(template))
+    print("template = {}".format(template))
     data = {
         'info': ''
     }
@@ -23,28 +24,29 @@ def register(request, **kwargs):
 @csrf_exempt
 def register_jump(request, **kwargs):
     user_data = request.GET
-    print (user_data)
-    username, password, password_rep, email = user_data['username'], user_data['password1'], user_data['password2'], user_data['email']
+    username = user_data['username']
+    password = user_data['password1']
+    password_rep = user_data['password2']
+    email = user_data['email']
 
     if password == password_rep:
         if User.objects.filter(username=username).exists():
-            print ("Already exists")
+            print("Already exists")
             data = {
                 'info': 'Username already exists'
             }
             template = loader.get_template('register.html')
             return HttpResponse(template.render(data))
         else:
-            print ("Created: {}, {}, {}".format(username, email, password))
+            print("Created: {}, {}, {}".format(username, email, password))
             user = User.objects.create_user(username, email, password)
             auth.login(request, user)
             env.create_person(username)
             return HttpResponseRedirect("/main")
     else:
-        print ("PWD not match")
+        print("PWD not match")
         data = {
             'info': 'Password should be the same'
         }
         template = loader.get_template('register.html')
         return HttpResponse(template.render(data))
-
