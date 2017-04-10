@@ -2,7 +2,7 @@
 # @Author: yuchen
 # @Date:   2017-04-06 13:38:20
 # @Last Modified by:   yuchen
-# @Last Modified time: 2017-04-08 13:21:17
+# @Last Modified time: 2017-04-10 10:04:03
 
 import http
 import urllib
@@ -234,12 +234,12 @@ class FaceAPI(object):
 
         try:
             conn = http.client.HTTPSConnection(self.cognitive_url)
-            print ("BODY = {}".format(body))
-            print ("HEADER = {}".format(header))
+            # print ("BODY = {}".format(body))
+            # print ("HEADER = {}".format(header))
             conn.request("POST", self.detect_url_root + face_id_attr_params, body, header)
             response = conn.getresponse()
             data = self._get_data(response.read())
-            print ("Raw response: {}".format(data))
+            # print ("Raw response: {}".format(data))
             conn.close()
         except Exception as e:
             data = {'error': 'POST failed in detect: {}'.format(e)}

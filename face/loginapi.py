@@ -2,7 +2,7 @@
 # @Author: yuchen
 # @Date:   2017-04-06 19:03:25
 # @Last Modified by:   yuchen
-# @Last Modified time: 2017-04-09 10:30:21
+# @Last Modified time: 2017-04-10 10:53:13
 
 # This lib provides higher level APIs than faceAPI.
 # Through this lib, faceAPI should not be transparent to the back-end module.
@@ -10,6 +10,7 @@
 from .faceapi import FaceAPI
 import json
 import numpy as np
+import os
 
 class Singleton(type):
     _instances = {}
@@ -32,6 +33,9 @@ class LoginAPI(metaclass=Singleton):
 		self.username_to_personid = {}
 		self.personid_to_username = {}
 
+		self.faceid_to_attr_dict = "attribute.json"
+		self._init_attr()
+
 		tmp = self._ensure(self._env.create_person_group())
 		tmp = self.create_person('JieTang')
 		tmp = self.add_face('JieTang', 'http://am-cdn-s0.b0.upaiyun.com/picture/01823/Jie_Tang_1348889820664.jpg!160?ran=0.6222543733421229')
@@ -44,6 +48,37 @@ class LoginAPI(metaclass=Singleton):
 		# print ('Checking {}'.format(data))
 		assert data is None or 'error' not in data, data['error']
 		return data
+
+	# Initialize faceId - Attribute db
+	def _init_attr(self):
+		if os.path.exists(self.faceid_to_attr_dict):
+			os.remove(self.faceid_to_attr_dict)
+			json.dump({}, open(self.faceid_to_attr_dict, 'w'))
+
+	# Save faceId - Attribute locally
+	def _save_attr(self, faceid, attribute):
+		if not os.path.exists(self.faceid_to_attr_dict):
+			json.dump({}, open(self.faceid_to_attr_dict, 'w'))
+		with open(self.faceid_to_attr_dict, 'r') as f:
+			data = json.load(f)
+
+		emotionkeys = ["anger", "contempt", "disgust", "fear", "happiness", "neutral", "sadness", "surprise"]
+		serial_emotion = lambda x: [x[y] for y in emotionkeys]
+		data[faceid] = {
+			'age': float(attribute['age']),
+			'gender': (1.0 if attribute['gender'] == 'male' else 0.0),
+			'emotion': attribute['emotion']
+		}
+		json.dump(data, open(self.faceid_to_attr_dict, 'w'))
+
+	# Load faceId - Attribute locally to accelerate profile view
+	def _load_attr(self, faceid):
+		with open(self.faceid_to_attr_dict, 'r') as f:
+			data = json.load(f)
+		if faceid in data:
+			return data[faceid]
+		else:
+			return None
 
 	# Create person
 	# Back-end should be (user name, password, faceid)
@@ -69,6 +104,7 @@ class LoginAPI(metaclass=Singleton):
 															width=rect['width'],
 															height=rect['height'])
 		persisted_faceid = self._ensure(self._env.add_face(self.username_to_personid[username], img_url, targetface=targetface, userdata=json.dumps(attribute)))['persistedFaceId']
+		self._save_attr(persisted_faceid, {'age': attribute['age'], 'gender': attribute['gender'], 'emotion': attribute['emotion']})
 		tmp = self._ensure(self._env.train_person_group())
 
 	# Login
@@ -115,14 +151,19 @@ class LoginAPI(metaclass=Singleton):
 		emotionkeys = ["anger", "contempt", "disgust", "fear", "happiness", "neutral", "sadness", "surprise"]
 		serial_emotion = lambda x: [x[y] for y in emotionkeys]
 		for faceid in person_data['persistedFaceIds']:
-			face_data = json.loads(self._ensure(self._env.get_person_face(personid, faceid))['userData'])
-			print ("FACE DATA = {}, TYPE = {}".format(face_data, type(face_data)))
+			tmp = self._load_attr(faceid)
+			if tmp is None:
+				face_data = json.loads(self._ensure(self._env.get_person_face(personid, faceid))['userData'])
+			else:
+				face_data = tmp
+			# print ("FACE DATA = {}, TYPE = {}".format(face_data, type(face_data)))
 			agelist.append(float(face_data['age']))
-			genderlist.append(1.0 if face_data['age'] == 'male' else 0.0)
+			genderlist.append(1.0 if face_data['gender'] == 'male' else 0.0)
 			emotionlist.append(serial_emotion(face_data['emotion']))
-		age = np.array(agelist).mean()
-		gender = np.array(genderlist).mean()
-		emotion = np.array(emotionlist).mean(axis=0)
+
+		age = '-' if len(agelist) == 0 else np.array(agelist).mean()
+		gender = 0.5 if len(genderlist) == 0 else np.array(genderlist).mean()
+		emotion = [0.0 for _ in emotionkeys] if len(emotionlist) == 0 else np.array(emotionlist).mean(axis=0)
 		facenum = len(agelist)
 		return {'age': age, 'gender': gender, 'emotion': emotion, 'facenum': facenum}
 

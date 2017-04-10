@@ -23,9 +23,6 @@ ip = "localhost:8000"
 def login_with_face_jump(request, **kwargs):
     if request.user.is_authenticated():
         return HttpResponseRedirect("/main")
-    print (request.FILES.keys())
-    print (request.GET.keys())
-    print (request.POST.keys())
     rawdata = request.FILES.get('webcam').read()
     # file_bytes = np.asarray(bytearray(rawdata), dtype=np.uint8)
     # img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)

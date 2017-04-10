@@ -7,101 +7,7 @@
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <style type="text/css">
-    img {
-        width: 280px;
-        height: 100%;
-        display: block;
-        margin: 0 auto;
-        padding-top: 20px;
-    }
-    
-    body {
-        background-image: url();
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-position: center;
-        background-size: cover;
-    }
-    
-    .container-fluid {
-        padding: 0px;
-    }
-    
-    #my_camera {
-        margin: 40px auto;
-    }
-    
-    video {
-        display: block;
-        margin: 0 auto;
-    }
-    
-    .btn {
-        display: block;
-        margin: 0 auto;
-        margin-top: 30px;
-        margin-bottom: 20PX;
-    }
-    
-    .row {
-        width: 100%;
-        padding-top: 100px;
-    }
-    
-    #myTab li {
-        width: 100%;
-        border: none;
-    }
-    
-    #myTab a {
-        margin: 0;
-    }
-    
-    .TAB {
-        height: 330px;
-        border-radius: 0px 0px 6px 6px;
-        border: 1px solid gainsboro;
-        border-top: none;
-        background-color: rgba(255, 255, 255, 0.5);
-    }
-    
-    .form-signin {
-        padding-top: 80px;
-    }
-    
-    #username,
-    #inputPassword,
-    #Signin {
-        margin: 0px auto;
-        width: 70%;
-    }
-    
-    #inputPassword {
-        margin-top: 30px;
-    }
-    
-    #Signin {
-        margin-top: 30px;
-    }
-    
-    li a {
-        text-align: center;
-    }
-    
-    .CAM {
-        border: 1PX solid #CCCCCC;
-        border-radius: 6px;
-        background-color: rgba(255, 255, 255, 0.5);
-    }
-    
-    h2 {
-        margin: 0;
-        padding-top: 130px;
-        text-align: center;
-        padding-bottom: 67px；
-    }
-    </style>
+    <link href="/static/css/style_main.css" rel="stylesheet">
 </head>
 
 <body style="background-color: #f5f5f5;">
@@ -121,12 +27,12 @@
                         <li>
                             <a>Welcome to AMiner, Guest</a>
                         </li>
-						<li>
-							<a href="/">Sign in</a>
-						</li>
-						<li>
-							<a href="register">Sign up</a>
-						</li>
+                        <li>
+                            <a href="/">Sign in</a>
+                        </li>
+                        <li>
+                            <a href="register">Sign up</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -148,7 +54,8 @@
                     <div class="TAB">
                         <div id="myTabContent" class="tab-content">
                             <div class="tab-pane fade in active" id="home">
-                                <br><br>
+                                <br>
+                                <br>
                                 <form class="form-signin2" action="login_pw_jump" method="post">
                                     <label for="username" class="sr-only">用户名</label>
                                     <input type="text" id="username" class="form-control" placeholder="Username" required autofocus name="username">
@@ -160,38 +67,42 @@
                         </div>
                     </div>
                 </div>
-                <script language="JavaScript">
-                Webcam.set({
-                    width: 320,
-                    height: 240,
-                    dest_width: 640,
-                    dest_height: 480,
-                    image_format: 'jpeg',
-                    jpeg_quality: 90,
-                    user_callback: function(data_uri) {
-                        // display results in page
-                        document.getElementById('results').innerHTML =
-                            '<h2>Here is your large image:</h2>' +
-                            '<img src="' + data_uri + '"/>';
+            </div>
+        </div>
+    </div>
+    <script language="JavaScript">
+    Webcam.set({
+        width: 320,
+        height: 240,
+        dest_width: 640,
+        dest_height: 480,
+        image_format: 'jpeg',
+        jpeg_quality: 90,
+        user_callback: function(data_uri) {
+            // display results in page
+            document.getElementById('results').innerHTML =
+                '<h2>Here is your large image:</h2>' +
+                '<img src="' + data_uri + '"/>';
 
-                    }
-                });
-                Webcam.attach('#my_camera');
+        }
+    });
+    Webcam.attach('#my_camera');
 
-                //code to handle taking the snapshot and displaying it locally 
+    //code to handle taking the snapshot and displaying it locally 
 
-                function take_snapshot() {
-                    // take snapshot and get image data
-                    Webcam.snap(function(data_uri) {
-                        // display results in page
-                        //document.getElementById('results').innerHTML =
-                        //    '<img src="' + data_uri + '"/>' //+
-                            //'<button class="btn btn-lg btn-primary btn-block" id="Signin" type="submit">Sign In</button>';
-                        Webcam.upload(data_uri, '/login_face_jump', function(){
-                            window.location = "/main";});
-                    });
-                }
-                </script>
+    function take_snapshot() {
+        // take snapshot and get image data
+        Webcam.snap(function(data_uri) {
+            // display results in page
+            //document.getElementById('results').innerHTML =
+            //    '<img src="' + data_uri + '"/>' //+
+            //'<button class="btn btn-lg btn-primary btn-block" id="Signin" type="submit">Sign In</button>';
+            Webcam.upload(data_uri, '/login_face_jump', function() {
+                window.location = "/main";
+            });
+        });
+    }
+    </script>
 </body>
 
 </html>

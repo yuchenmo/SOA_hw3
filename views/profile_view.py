@@ -9,10 +9,11 @@ from django.contrib.auth.decorators import login_required
 
 from IPython import embed
 import json
-import numpy as np
 import cv2
+import numpy as np
 from hashlib import md5
 from os import path as op
+
 from face.loginapi import env
 
 @login_required(login_url='/')
@@ -29,7 +30,7 @@ def profile_view(request, **kwargs):
 
     data ={
         'age': age,
-        'gender': 'male' if gender < 0.5 else 'female',
+        'gender': ('male' if gender < 0.35 else ('female' if gender > 0.65 else 'unknown')),
         'emotion': emotionkeys[emotion],
         'facenum': facenum
     }
