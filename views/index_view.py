@@ -10,5 +10,5 @@ def index_view(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect("/main")
     else:
-        template = loader.get_template('new_index3.html')
+        template = loader.get_template('index.html')
         return HttpResponse(template.render({}))

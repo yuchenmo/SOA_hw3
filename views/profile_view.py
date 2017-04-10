@@ -3,7 +3,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 
-from IPython import embed
 import numpy as np
 
 from face.loginapi import env

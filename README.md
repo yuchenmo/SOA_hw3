@@ -33,6 +33,8 @@ SOA homework 3
 -	Try login with an image
 
 		env.login_with_face('xxx.jpg')
+		
+-	apikey.json includes 'key', 'ml_api_key', 'workspace_id', 'service_id', 'LUIS_app_id', 'LUIS_appkey' provided by corresponding Microsoft service website.
 
 
 ## Acknowlegdement
