@@ -1,21 +1,11 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-from django.template import Context, loader
+from django.template import loader
 from django.contrib import auth
 from django.contrib.auth.models import User
-from os import path as op
-from hashlib import md5
-import json
 
 from face.loginapi import env
-import numpy as np
-import cv2
-import base64
 import time
-
-from IPython import embed
 
 ip = "localhost:8000"
 
@@ -25,19 +15,6 @@ def login_with_face_jump(request, **kwargs):
     if request.user.is_authenticated():
         return HttpResponseRedirect("/main")
     rawdata = request.FILES.get('webcam').read()
-    # file_bytes = np.asarray(bytearray(rawdata), dtype=np.uint8)
-    # img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-
-    # m = md5()
-    # m.update(file_bytes)
-    # name = "{}.jpg".format(m.hexdigest())
-    # path = op.join(settings.BASE_DIR + settings.STATIC_DIRS,
-    #                'snapshots', name)
-    # cv2.imwrite(path, img)
-    # url = "http://{}/static/snapshots/{}".format(ip, name)
-    # with open(path, 'rb') as img_file:
-    #   url = base64.b64encode(img_file.read())
-    #   url = img_file.read()
     url = rawdata
     t = env.login_with_face(url)
     if 'error' in t:
@@ -50,7 +27,7 @@ def login_with_face_jump(request, **kwargs):
         user = User.objects.get(username=username)
         auth.login(request, user)
         while not request.user.is_authenticated():
-            time.sleep(0.1)
+            time.sleep(0.05)
         print("It's time")
         # template = loader.get_template('main.html')
         # return HttpResponse(template.render({}))

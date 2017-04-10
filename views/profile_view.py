@@ -1,17 +1,10 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-from django.template import Context, loader
-from django.contrib import auth
-from django.contrib.auth.models import User
+from django.template import loader
 from django.contrib.auth.decorators import login_required
 
 from IPython import embed
-import json
-import cv2
 import numpy as np
-from os import path as op
 
 from face.loginapi import env
 

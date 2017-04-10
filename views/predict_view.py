@@ -1,15 +1,8 @@
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-from django.template import Context, loader
-from django.contrib import auth
-from django.urls import reverse
-from django.contrib.auth.models import User
+from django.template import loader
 
-import json
 from automobile.model import predict
-
 
 @csrf_exempt
 def predict_view(request, **kwargs):
