@@ -2,13 +2,20 @@
 
 SOA homework 3
 
+## Intentions
+
+-	Login with face
+-	Natural language understanding
+-	Cloud user-defined ML service
 
 ## Structure
 
 -	Face API: Wrapped Microsoft Cognitive Service APIs
 -	Login API: Wrapped Face API for back-end usage
+-	LUIS API: Wrapped Microsoft LUIS SDK
+-	Price Pridicting model: Wrapped Microsoft Machine Learning Framework
 
-## Example
+## LoginAPI Example
 
 -	Initialize
 
@@ -30,4 +37,5 @@ SOA homework 3
 
 ## Acknowlegdement
 
--	[jpegcam](https://code.google.com/archive/p/jpegcam/downloads). Rearranged files to suit Django style
+-	Webcam.js
+-	Microsoft LUIS SDK
