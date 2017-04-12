@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from voice.voiceapi import voice_seq
 import requests
 import base64
+import json
 
 
 @login_required(login_url='/')
@@ -22,15 +23,10 @@ def voice_acc(request, **kwargs):
 def voice_view(request, **kwargs):
 
     full_voice = voice_seq.digest()
-    # TODO: Bing STT API
-    '''
-    POST 
-    Content-Length: 0
-    '''
     access_token = requests.post("https://api.cognitive.microsoft.com/sts/v1.0/issueToken",
                                  headers={
                                      "Content-Length": "0",
-                                     "Ocp-Apim-Subscription-Key": "e382424dab894df981b8482bf50cb9f8"
+                                     "Ocp-Apim-Subscription-Key": json.load(open("key/apikey.json", 'r'))['STT_api_key']
                                  }
                                  ).text
     '''
@@ -65,5 +61,4 @@ def voice_view(request, **kwargs):
     print(data.text)
     txt = data.text
     # txt = 'show profile'
-    # TODO: Attach to LUIS view
     return HttpResponseRedirect('/luis?content={}'.format(txt))
