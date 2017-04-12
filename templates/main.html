@@ -54,6 +54,7 @@
             <label for="time-interval">Time Interval (milliseconds):</label>
             <input type="text" id="time-interval" value="5000">ms
             <br>
+            <!--
             <label for="left-channel">Record Mono Audio if WebAudio API is selected (above)</label>
             <input id="left-channel" type="checkbox" checked style="width:auto;">
             <br> recorderType:
@@ -65,6 +66,7 @@
             </select>
             <br>
             <br>
+            -->
             <button class="btn btn-lg btn-primary" id="start-recording">Record</button>
             <button class="btn btn-lg btn-primary" id="stop-recording" disabled>Stop</button>
             <button class="btn btn-lg btn-primary" id="pause-recording" disabled>Pause</button>
@@ -196,6 +198,7 @@
         */
         mediaRecorder = new MediaStreamRecorder(stream);
         mediaRecorder.stream = stream;
+        /*
         var recorderType = document.getElementById('audio-recorderType').value;
         if (recorderType === 'MediaRecorder API') {
             mediaRecorder.recorderType = MediaRecorderWrapper;
@@ -208,9 +211,13 @@
             mediaRecorder.recorderType = StereoAudioRecorder;
             mediaRecorder.mimeType = 'audio/pcm';
         }
+        */
+        mediaRecorder.recorderType = StereoAudioRecorder;
+        mediaRecorder.mimeType = 'audio/wav';
         // don't force any mimeType; use above "recorderType" instead.
         // mediaRecorder.mimeType = 'audio/webm'; // audio/ogg or audio/wav or audio/webm
-        mediaRecorder.audioChannels = !!document.getElementById('left-channel').checked ? 1 : 2;
+        // mediaRecorder.audioChannels = !!document.getElementById('left-channel').checked ? 1 : 2;
+        mediaRecorder.audioChannels = 2;
         mediaRecorder.ondataavailable = function(blob) {
             /*
             var a = document.createElement('a');

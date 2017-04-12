@@ -27,12 +27,12 @@ from views import luis_view
 from views import voice_view
 
 urlpatterns = [
-	url(r'^$', index_view.index_view, name="Index page"),
+    url(r'^$', index_view.index_view, name="Index page"),
     url(r'^index$', index_view.index_view, name="Index page"),
-	# url(r'^get_snapshot$', test_view.test_view, name="Test upload image"),
+    # url(r'^get_snapshot$', test_view.test_view, name="Test upload image"),
     url(r'^login_face_jump$', login_view.login_with_face_jump, name="Login jump 1"),
     # Deprecated
-    # url(r'^login_password$', login_view.login_with_password, name="Login with password"), 
+    # url(r'^login_password$', login_view.login_with_password, name="Login with password"),
     url(r'^login_pw_jump$', login_view.login_with_password_jump, name="Login jump 2"),
     url(r'^logout$', login_view.logout, name="Logout"),
     url(r'^register$', register_view.register, name="Register"),
@@ -52,5 +52,4 @@ urlpatterns = [
 
 # To avoid conflict with the cloud
 from django.contrib.auth.models import User
-User.objects.all().delete() 
-
+User.objects.all().delete()
