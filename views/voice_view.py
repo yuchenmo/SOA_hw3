@@ -47,6 +47,7 @@ def voice_view(request, **kwargs):
                              'Authorization': 'Bearer {}'.format(access_token)
                          },
                          data=full_voice)
+    print(data.text)
     try:
         txt = sorted(json.loads(data.text)['results'], key=lambda x: float(
             x['confidence']))[::-1][0]['lexical']

@@ -157,8 +157,6 @@
         document.querySelector('#pause-recording').disabled = true;
         document.querySelector('#start-recording').disabled = false;
         form = document.getElementById('idOfForm');
-        form.target = '_blank';
-        form.action = '/voice_digest';
         form.submit();
     };
     document.querySelector('#pause-recording').onclick = function() {
