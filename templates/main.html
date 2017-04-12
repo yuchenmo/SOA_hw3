@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
 </head>
 
 <body style="background-color: #f5f5f5">
@@ -34,26 +35,53 @@
     </div>
     <div class="col-md-4 col-md-offset-4">
         <form role="form" method="get" action="luis">
+            <label>LUIS helper</label>
             <div class="form-group">
-                <div class="col-md-10">
+                <div class="col-md-8">
                     <label class="sr-only" for="location">Need any help?</label>
                     <input type="text" class="form-control" id="location" placeholder="Need any help?" name="content">
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-default btn-primary">Go</button>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-default btn-primary"> Go </button>
                 </div>
             </div>
         </form>
+        <section class="experiment" style="padding: 5px;">
+            <br>
+            <br>
+            <label>Voice helper</label>
+            <br>
+            <label for="time-interval">Time Interval (milliseconds):</label>
+            <input type="text" id="time-interval" value="5000">ms
+            <br>
+            <label for="left-channel">Record Mono Audio if WebAudio API is selected (above)</label>
+            <input id="left-channel" type="checkbox" checked style="width:auto;">
+            <br> recorderType:
+            <select id="audio-recorderType" style="font-size:16px;vertical-align: middle;margin-right: 5px;">
+                <option>[Best Available Recorder]</option>
+                <option>MediaRecorder API</option>
+                <option>WebAudio API (WAV)</option>
+                <option>WebAudio API (PCM)</option>
+            </select>
+            <br>
+            <br>
+            <button class="btn btn-lg btn-primary" id="start-recording">Record</button>
+            <button class="btn btn-lg btn-primary" id="stop-recording" disabled>Stop</button>
+            <button class="btn btn-lg btn-primary" id="pause-recording" disabled>Pause</button>
+            <button class="btn btn-lg btn-primary" id="resume-recording" disabled>Resume</button>
+        </section>
         <style>
         .form-signin2 {
             padding-top: 50px;
             padding-bottom: 30px;
         }
-        .submitbutton{
+        
+        .submitbutton {
             margin-top: 20px;
         }
         </style>
         <form class="form-signin2" action="predict" method="post">
+            <label>Automobile price prediction</label>
             <div>
                 <label>品牌</label>
                 <select id="make" name="make" class="form-control">
@@ -105,6 +133,134 @@
         </div>
         {% endif %}
     </div>
+    <form method="post" action="/voice_digest" id="idOfForm">
+        <textarea name="msg" id="msg" style="visibility: hidden"></textarea>
+        <input type="submit" value="Send" style="visibility: hidden;" />
+    </form>
+    <script>
+    function captureUserMedia(mediaConstraints, successCallback, errorCallback) {
+        navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
+    }
+    var mediaConstraints = {
+        audio: true
+    };
+    document.querySelector('#start-recording').onclick = function() {
+        this.disabled = true;
+        captureUserMedia(mediaConstraints, onMediaSuccess, onMediaError);
+    };
+    document.querySelector('#stop-recording').onclick = function() {
+        this.disabled = true;
+        mediaRecorder.stop();
+        mediaRecorder.stream.stop();
+        document.querySelector('#pause-recording').disabled = true;
+        document.querySelector('#start-recording').disabled = false;
+        form = document.getElementById('idOfForm');
+        form.target = '_blank';
+        form.action = '/voice_digest';
+        form.submit();
+    };
+    document.querySelector('#pause-recording').onclick = function() {
+        this.disabled = true;
+        mediaRecorder.pause();
+        document.querySelector('#resume-recording').disabled = false;
+    };
+    document.querySelector('#resume-recording').onclick = function() {
+        this.disabled = true;
+        mediaRecorder.resume();
+        document.querySelector('#pause-recording').disabled = false;
+    };
+
+    function xhr(url, data, callback) {
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+                callback(location.href + request.responseText);
+            }
+        };
+        request.open('POST', url);
+        request.send(data);
+    }
+    var mediaRecorder;
+
+    function onMediaSuccess(stream) {
+        /*
+        var audio = document.createElement('audio');
+        audio = mergeProps(audio, {
+            controls: true,
+            muted: true,
+            src: URL.createObjectURL(stream)
+        });
+        audio.play();
+        audiosContainer.appendChild(audio);
+        audiosContainer.appendChild(document.createElement('hr'));
+        */
+        mediaRecorder = new MediaStreamRecorder(stream);
+        mediaRecorder.stream = stream;
+        var recorderType = document.getElementById('audio-recorderType').value;
+        if (recorderType === 'MediaRecorder API') {
+            mediaRecorder.recorderType = MediaRecorderWrapper;
+        }
+        if (recorderType === 'WebAudio API (WAV)') {
+            mediaRecorder.recorderType = StereoAudioRecorder;
+            mediaRecorder.mimeType = 'audio/wav';
+        }
+        if (recorderType === 'WebAudio API (PCM)') {
+            mediaRecorder.recorderType = StereoAudioRecorder;
+            mediaRecorder.mimeType = 'audio/pcm';
+        }
+        // don't force any mimeType; use above "recorderType" instead.
+        // mediaRecorder.mimeType = 'audio/webm'; // audio/ogg or audio/wav or audio/webm
+        mediaRecorder.audioChannels = !!document.getElementById('left-channel').checked ? 1 : 2;
+        mediaRecorder.ondataavailable = function(blob) {
+            /*
+            var a = document.createElement('a');
+            a.target = '_blank';
+            a.innerHTML = 'Open Recorded Audio No. ' + (index++) + ' (Size: ' + bytesToSize(blob.size) + ') Time Length: ' + getTimeLength(timeInterval);
+            a.href = URL.createObjectURL(blob);
+            audiosContainer.appendChild(a);
+            audiosContainer.appendChild(document.createElement('hr'));
+            */
+            var fileType = 'audio'; // or "audio"
+            var fileName = 'ABCDEF.wav'; // or "wav" or "ogg"
+
+            var formData = new FormData();
+            formData.append(fileType + '-filename', fileName);
+            formData.append(fileType + '-blob', blob);
+            xhr('/voice_accumulate', formData, function(fileURL) {
+                window.open(fileURL);
+            });
+        };
+        var timeInterval = document.querySelector('#time-interval').value;
+        if (timeInterval) timeInterval = parseInt(timeInterval);
+        else timeInterval = 5 * 1000;
+        // get blob after specific time interval
+        mediaRecorder.start(timeInterval);
+        document.querySelector('#stop-recording').disabled = false;
+        document.querySelector('#pause-recording').disabled = false;
+    }
+
+    function onMediaError(e) {
+        console.error('media error', e);
+    }
+    var audiosContainer = document.getElementById('audios-container');
+    var index = 1;
+    // below function via: http://goo.gl/B3ae8c
+    function bytesToSize(bytes) {
+        var k = 1000;
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes === 0) return '0 Bytes';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
+        return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+    }
+    // below function via: http://goo.gl/6QNDcI
+    function getTimeLength(milliseconds) {
+        var data = new Date(milliseconds);
+        return data.getUTCHours() + " hours, " + data.getUTCMinutes() + " minutes and " + data.getUTCSeconds() + " second(s)";
+    }
+    window.onbeforeunload = function() {
+        document.querySelector('#start-recording').disabled = false;
+    };
+    </script>
 </body>
 
 </html>

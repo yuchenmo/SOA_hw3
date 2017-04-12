@@ -24,6 +24,7 @@ from views import register_view
 from views import error_view
 from views import predict_view
 from views import luis_view
+from views import voice_view
 
 urlpatterns = [
 	url(r'^$', index_view.index_view, name="Index page"),
@@ -42,6 +43,8 @@ urlpatterns = [
     url(r'^main$', main_view.main_view, name="Main menu"),
     url(r'^predict$', predict_view.predict_view, name="Predict view"),
     url(r'^luis$', luis_view.luis_view, name="Language understanding API"),
+    url(r'^voice_accumulate$', voice_view.voice_acc, name="Voice Accumulation"),
+    url(r'^voice_digest$', voice_view.voice_view, name="Digest recorded voice"),
     url(r'^error$', error_view.error_view, name="Error view"),
     url(r'^.*?$', index_view.index_view, name="Error"),
     url(r'^admin/', admin.site.urls),

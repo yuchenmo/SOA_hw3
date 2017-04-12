@@ -2,12 +2,11 @@
 # @Author: yuchen
 # @Date:   2017-04-06 13:38:20
 # @Last Modified by:   yuchen
-# @Last Modified time: 2017-04-10 11:36:17
+# @Last Modified time: 2017-04-12 14:21:08
 
 import http
 import urllib
 from urllib import request, parse, error
-import base64
 import json
 from os import path as op
 

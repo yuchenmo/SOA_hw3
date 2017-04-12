@@ -42,6 +42,14 @@ def luis_view(request, **kwargs):
             u.set_password(password)
             u.save()
         return HttpResponseRedirect("/main")
+    elif indent == "CheckMainPage":
+        return HttpResponseRedirect("/main")
+    elif indent == "PredictAutomobile":
+        return HttpResponseRedirect("/main")
+    elif indent == "CheckProfile":
+        return HttpResponseRedirect("/profile")
+    elif indent == "Logout":
+        return HttpResponseRedirect("/logout")
     elif indent == "TakeSnap":
         return HttpResponseRedirect("/add_face")
     else:
