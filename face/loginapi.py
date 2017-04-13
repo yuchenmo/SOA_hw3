@@ -2,7 +2,7 @@
 # @Author: yuchen
 # @Date:   2017-04-06 19:03:25
 # @Last Modified by:   yuchen
-# @Last Modified time: 2017-04-10 16:30:00
+# @Last Modified time: 2017-04-13 21:57:21
 
 # This lib provides higher level APIs than faceAPI.
 # Through this lib, faceAPI should not be transparent to the back-end module.
@@ -11,6 +11,7 @@ from .faceapi import FaceAPI
 import json
 import numpy as np
 import os
+import time
 
 
 class Singleton(type):
@@ -45,8 +46,18 @@ class LoginAPI(metaclass=Singleton):
         tmp = self.create_person('JieTang')
         tmp = self.add_face(
             'JieTang', 'http://am-cdn-s0.b0.upaiyun.com/picture/01823/Jie_Tang_1348889820664.jpg!160?ran=0.6222543733421229')
-        tmp = self._ensure(self._env.train_person_group())
+        self._wait_for_training()
         print("New LoginAPI object created")
+
+    # Too dirty..
+    # Worst code I've ever written maybe...
+    def _wait_for_training(self):
+        for _ in range(50):
+            try:
+                tmp = self._ensure(self._env.train_person_group())
+                break
+            except AssertionError:
+                time.sleep(0.5)
 
     # Ensure FaceAPI status
     # Naive implementation
@@ -118,6 +129,7 @@ class LoginAPI(metaclass=Singleton):
 
     # Login
     def login_with_face(self, img_url):
+        self._wait_for_training()
         status = self._ensure(self._env.check_train_status())['status']
         if status != "succeeded":
             return {'error': 'Model is under training'}
